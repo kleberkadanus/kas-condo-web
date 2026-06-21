@@ -34,15 +34,18 @@ jobs:
           target: /var/www/kas-condo-web
           strip_components: 1
 
-      - name: Restart nginx
+      - name: Configure nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 104.234.200.93
           username: root
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            apt-get install -y nginx 2>/dev/null | tail -1
-            cat > /etc/nginx/sites-available/kas-condo-web << 'NGINX'
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq
+            apt-get install -y nginx
+            mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
+            cat > /etc/nginx/sites-available/kas-condo-web <<'NGINX'
             server {
                 listen 80;
                 root /var/www/kas-condo-web;
@@ -54,4 +57,7 @@ jobs:
             NGINX
             ln -sf /etc/nginx/sites-available/kas-condo-web /etc/nginx/sites-enabled/kas-condo-web
             rm -f /etc/nginx/sites-enabled/default
-            nginx -t && systemctl reload nginx || systemctl start nginx
+            nginx -t
+            systemctl enable nginx
+            systemctl restart nginx
+            systemctl status nginx --no-pager
