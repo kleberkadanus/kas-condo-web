@@ -1,0 +1,57 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: http://104.234.200.93:8090
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 104.234.200.93
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: dist/*
+          target: /var/www/kas-condo-web
+          strip_components: 1
+
+      - name: Restart nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 104.234.200.93
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            apt-get install -y nginx 2>/dev/null | tail -1
+            cat > /etc/nginx/sites-available/kas-condo-web << 'NGINX'
+            server {
+                listen 80;
+                root /var/www/kas-condo-web;
+                index index.html;
+                location / {
+                    try_files $uri $uri/ /index.html;
+                }
+            }
+            NGINX
+            ln -sf /etc/nginx/sites-available/kas-condo-web /etc/nginx/sites-enabled/kas-condo-web
+            rm -f /etc/nginx/sites-enabled/default
+            nginx -t && systemctl reload nginx || systemctl start nginx
