@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../store/auth';
 import { getBoletos, uploadBoleto, markBoletoAsPaid } from '../api/condos';
-import { Upload, CheckCircle, FileText, Download } from 'lucide-react';
+import { Upload, CheckCircle, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE } from '../api/client';
 

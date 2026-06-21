@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../store/auth';
 import { getAnnouncements, createAnnouncement, deleteAnnouncement } from '../api/condos';
-import { Plus, Trash2, X, Bell } from 'lucide-react';
+import { Plus, Trash2, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = ['geral', 'manutencao', 'seguranca', 'financeiro', 'lazer', 'reuniao'];

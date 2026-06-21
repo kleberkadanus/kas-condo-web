@@ -1,9 +1,9 @@
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import {
   LayoutDashboard, Building2, Users, Bell, FileText,
-  CalendarDays, Camera, LogOut, Menu, X, ChevronDown
+  CalendarDays, Camera, LogOut, Menu, X
 } from 'lucide-react';
 
 interface NavItem { label: string; path: string; icon: ReactNode; roles: string[] }

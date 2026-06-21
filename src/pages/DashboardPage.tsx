@@ -18,7 +18,7 @@ function StatCard({ label, value, icon, color }: { label: string; value: any; ic
   );
 }
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export default function DashboardPage() {
   const { user } = useAuth();
